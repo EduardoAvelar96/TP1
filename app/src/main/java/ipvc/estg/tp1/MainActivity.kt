@@ -1,33 +1,51 @@
 package ipvc.estg.tp1
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
-import ipvc.estg.tp1.adapter.LineAdapter
-import ipvc.estg.tp1.dataclasses.Place
+import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import ipvc.estg.app.adapters.LineAdapter
+import ipvc.estg.tp1.entities.Note
+import ipvc.estg.tp1.viewModel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
     //Definir array recyclerview
-    private lateinit var myList: ArrayList<Place>
+    private lateinit var noteViewModel: NoteViewModel
+    private val newWordActivityRequestCode = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //Recyclerview
-        myList = ArrayList<Place>()
+        //recycler view
+        val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
+        val adapter = LineAdapter(this)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this)
 
-        for (i in 0 until 50){
-            myList.add(Place("Titulo $i", "ID $i"))
+        //view Model
+        noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
+        noteViewModel.allNotes.observe( this, { notes ->
+            notes?.let { adapter.setNotes(it) }
+        })
+
+
+        //Fab
+        val fab = findViewById<FloatingActionButton>(R.id.fab)
+        fab.setOnClickListener{
+            val intent = Intent(this@MainActivity, AddNote::class.java)
+            startActivityForResult(intent,newWordActivityRequestCode)
         }
-        recycler_view.adapter = LineAdapter(myList)
-        recycler_view.layoutManager = LinearLayoutManager(this)
     }
 
 
@@ -54,6 +72,21 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             else -> super.onOptionsItemSelected(item)
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            data?.getStringExtra(AddNote.EXTRA_REPLY)?.let {
+                val note = Note(title = it, note = "Portugal")
+                noteViewModel.insert(note)
+            }
+        } else {
+            Toast.makeText(
+                applicationContext,
+                "Cidade vazia: não inserida",
+                Toast.LENGTH_LONG).show()
         }
     }
 }
