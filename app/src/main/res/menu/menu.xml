@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item android:id="@+id/opt1"
+
+        android:title="@string/Ins"
+        app:showAsAction="ifRoom">
+    </item>
+    <item android:id="@+id/opt2"
+        android:title="@string/Edi"
+        app:showAsAction="never">
+    </item>
+    <item android:id="@+id/opt3"
+        android:title="@string/Rem"
+        app:showAsAction="never">
+    </item>
+</menu>
