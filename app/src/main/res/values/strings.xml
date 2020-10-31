@@ -3,4 +3,6 @@
     <string name="Ins">Insert</string>
     <string name="Rem">Remove</string>
     <string name="Edi">Edit</string>
+    <string name="Tit">Insert a title:</string>
+    <string name="Tex">Insert a note:</string>
 </resources>

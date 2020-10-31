@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.app.adapters.LineAdapter
+import ipvc.estg.tp1.AddNote.Companion.EXTRA_REPLY2
 import ipvc.estg.tp1.entities.Note
 import ipvc.estg.tp1.viewModel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
@@ -39,15 +40,7 @@ class MainActivity : AppCompatActivity() {
             notes?.let { adapter.setNotes(it) }
         })
 
-
-        //Fab
-        val fab = findViewById<FloatingActionButton>(R.id.fab)
-        fab.setOnClickListener{
-            val intent = Intent(this@MainActivity, AddNote::class.java)
-            startActivityForResult(intent,newWordActivityRequestCode)
-        }
     }
-
 
     //Ver menu opções
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -60,7 +53,8 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId){
             R.id.opt1->{
-                Toast.makeText(this, "teste", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@MainActivity, AddNote::class.java)
+                startActivityForResult(intent,newWordActivityRequestCode)
                 true
             }
             R.id.opt2->{
@@ -76,16 +70,20 @@ class MainActivity : AppCompatActivity() {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-            data?.getStringExtra(AddNote.EXTRA_REPLY)?.let {
-                val note = Note(title = it, note = "Portugal")
+
+            val titulo = data?.getStringExtra(AddNote.EXTRA_REPLY)
+            val conteudo = data?.getStringExtra(AddNote.EXTRA_REPLY2)
+
+            if (titulo!= null && conteudo != null) {
+                val note = Note(title = titulo, note = conteudo)
                 noteViewModel.insert(note)
             }
+
         } else {
             Toast.makeText(
                 applicationContext,
-                "Cidade vazia: não inserida",
+                    "Nota Vazia: Não Inserida",
                 Toast.LENGTH_LONG).show()
         }
     }
