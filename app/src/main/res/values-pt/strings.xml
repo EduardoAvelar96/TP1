@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Notes</string>
+    <string name="app_name">Notas</string>
     <string name="Ins">Inserir</string>
     <string name="Rem">Remover</string>
     <string name="Edi">Editar</string>
+    <string name="Tit">Inserir um título:</string>
+    <string name="Tex">Inserir uma nota:</string>
 </resources>

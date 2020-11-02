@@ -15,7 +15,7 @@ public abstract class NoteDB : RoomDatabase() {
 
     abstract fun noteDao(): NoteDao
 
-    private class WordDatabaseCallback(
+   /* private class WordDatabaseCallback(
         private val scope: CoroutineScope
     ) : RoomDatabase.Callback() {
 
@@ -28,22 +28,12 @@ public abstract class NoteDB : RoomDatabase() {
                     //delete
                     NoteDao.deleteAll()
 
-                    //add sample words
-                    var note = Note(1,"Primeira Nota","ZZZ")
-                    NoteDao.insert(note)
-                    note = Note(2,"Segunda Nota","YYY")
-                    NoteDao.insert(note)
+
 
                 }
             }
         }
-    }
-
-
-
-
-
-
+    }*/
 
     companion object {
         // Singleton prevents multiple instances of database opening at the
@@ -63,8 +53,8 @@ public abstract class NoteDB : RoomDatabase() {
                     "notes_database"
                 )
                     //estratégia de destrução
-                    //.fallbackToDestructiveMigration()
-                    .addCallback(WordDatabaseCallback(scope))
+                    .fallbackToDestructiveMigration()
+                    //.addCallback(WordDatabaseCallback(scope))
                     .build()
                 INSTANCE = instance
                 return instance
