@@ -12,7 +12,7 @@ import ipvc.estg.tp1.entities.Note
 @Dao
 interface NoteDao {
 
-    @Query("Select * from note_table ORDER BY Title ASC")
+    @Query("Select * from note_table ORDER BY id ASC")
     fun getAlphabetizedNotes(): LiveData<List<Note>>
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
