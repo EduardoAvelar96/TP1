@@ -5,4 +5,5 @@
     <string name="Edi">Edit</string>
     <string name="Tit">Insert a title:</string>
     <string name="Tex">Insert a note:</string>
+    <string name="Id">Insert a ID:</string>
 </resources>

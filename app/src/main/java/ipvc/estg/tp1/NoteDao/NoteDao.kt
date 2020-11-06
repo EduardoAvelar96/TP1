@@ -1,11 +1,7 @@
 package ipvc.estg.tp1.NoteDao
 
-import android.icu.text.CaseMap
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import ipvc.estg.tp1.entities.Note
 
 
@@ -20,4 +16,5 @@ interface NoteDao {
 
     @Query("DELETE FROM note_table")
     suspend fun deleteAll()
+
 }

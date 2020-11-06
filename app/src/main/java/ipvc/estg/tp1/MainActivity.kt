@@ -13,12 +13,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.app.adapters.LineAdapter
+import ipvc.estg.app.adapters.OnNoteItemClickListener
 import ipvc.estg.tp1.AddNote.Companion.EXTRA_REPLY2
 import ipvc.estg.tp1.entities.Note
 import ipvc.estg.tp1.viewModel.NoteViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
 
     //Definir array recyclerview
     private lateinit var noteViewModel: NoteViewModel
@@ -30,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         //recycler view
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
-        val adapter = LineAdapter(this)
+        val adapter = LineAdapter(this, this)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
@@ -87,4 +88,11 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_LONG).show()
         }
     }
+
+    //clickListener
+    override fun onItemClick(notes: Note, position: Int) {
+        Toast.makeText(this, notes.title, Toast.LENGTH_SHORT).show()
+
+    }
 }
+
