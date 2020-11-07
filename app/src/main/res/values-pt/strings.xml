@@ -8,4 +8,5 @@
     <string name="Tex">Inserir uma nota:</string>
     <string name="Id">Inserir um ID:</string>
     <string name="RemAll">Remover todas</string>
+    <string name="Save">Guardar</string>
 </resources>

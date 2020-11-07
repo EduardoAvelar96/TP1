@@ -7,4 +7,5 @@
     <string name="Tex">Insert a note:</string>
     <string name="Id">Insert a ID:</string>
     <string name="RemAll">Remove all</string>
+    <string name="Save">Save</string>
 </resources>

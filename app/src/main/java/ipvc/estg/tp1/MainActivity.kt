@@ -75,8 +75,8 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        //ADICIONAR NOTA
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
-
             val titulo = data?.getStringExtra(AddNote.EXTRA_REPLY)
             val conteudo = data?.getStringExtra(AddNote.EXTRA_REPLY2)
 
@@ -84,11 +84,25 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
                 val note = Note(title = titulo, note = conteudo)
                 noteViewModel.insert(note)
             }
-        } else {
+        } else if(requestCode == newWordActivityRequestCode){
             Toast.makeText(
                     applicationContext,
                     "Nota Vazia: Não Inserida",
                     Toast.LENGTH_LONG).show()
+        }
+        //EDITAR NOTA
+        if (requestCode == EditActivityRequestCode && resultCode == RESULT_OK) {
+            val id = data?.getIntExtra( EditNote.EXTRA_ID, -1 )
+
+            val titulo = data?.getStringExtra( EditNote.EXTRA_REPLY ).toString()
+            val conteudo = data?.getStringExtra( EditNote.EXTRA_REPLY2 ).toString()
+            val note = Note(id,titulo,conteudo)
+
+            noteViewModel.editNote(note)
+            Toast.makeText(applicationContext,"Nota Editada",Toast.LENGTH_LONG).show()
+        }
+        else if(requestCode == EditActivityRequestCode) {
+            Toast.makeText(applicationContext,"Campos Incompletos",Toast.LENGTH_LONG).show()
         }
     }
 
