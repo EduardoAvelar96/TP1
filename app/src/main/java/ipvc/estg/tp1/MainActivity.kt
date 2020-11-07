@@ -10,8 +10,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Delete
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.app.adapters.LineAdapter
 import ipvc.estg.app.adapters.OnNoteItemClickListener
@@ -39,11 +41,23 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
+
         //view Model
         noteViewModel = ViewModelProvider(this).get(NoteViewModel::class.java)
         noteViewModel.allNotes.observe( this, { notes ->
             notes?.let { adapter.setNotes(it) }
         })
+
+        //SWIPE TO DELETE
+        ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT){
+            override fun onMove(recyclerView: RecyclerView, viewHolder: RecyclerView.ViewHolder, target: RecyclerView.ViewHolder): Boolean {
+                return false
+            }
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                noteViewModel.deleteNote(adapter.getNoteAt(viewHolder.layoutPosition))
+                Toast.makeText(applicationContext,"Nota apagada",Toast.LENGTH_LONG).show()
+            }
+        }).attachToRecyclerView(recyclerView)
 
     }
 
@@ -63,9 +77,6 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
                 true
             }
             R.id.opt2->{
-                true
-            }
-            R.id.opt3->{
                 noteViewModel.deleteAll()
                 Toast.makeText(applicationContext,"Todas as notas foram apagadas",Toast.LENGTH_LONG).show()
                 true
@@ -114,5 +125,7 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
         intent.putExtra(EditNote.EXTRA_REPLY2, note.note)
         startActivityForResult(intent, EditActivityRequestCode)
     }
+
+
 }
 

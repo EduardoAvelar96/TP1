@@ -4,12 +4,15 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.viewModelScope
+import ipvc.estg.tp1.NoteDao.NoteDao
 import kotlinx.coroutines.launch
 import ipvc.estg.tp1.db.NoteDB
 import ipvc.estg.tp1.db.NoteRepository
 import ipvc.estg.tp1.entities.Note
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.nio.file.Files.delete
 
 class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -39,5 +42,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
 
     fun editNote(note: Note) = viewModelScope.launch{
         repository.editNote(note)
+    }
+
+    fun deleteNote(note: Note) = viewModelScope.launch{
+        repository.deleteNote(note)
     }
 }

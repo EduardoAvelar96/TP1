@@ -15,6 +15,8 @@ class LineAdapter internal constructor(context: Context, val clickListener: OnNo
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var notes = emptyList<Note>()
 
+    fun getNoteAt(position: Int): Note=notes.get(position)
+
     class NoteViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val noteItemView: TextView = itemView.findViewById(R.id.textView)
         val tituloItemView: TextView = itemView.findViewById(R.id.textView2)

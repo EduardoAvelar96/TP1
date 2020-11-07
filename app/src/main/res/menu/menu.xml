@@ -8,10 +8,6 @@
         app:showAsAction="ifRoom">
     </item>
     <item android:id="@+id/opt2"
-        android:title="@string/Edi"
-        app:showAsAction="never">
-    </item>
-    <item android:id="@+id/opt3"
         android:title="@string/RemAll"
         app:showAsAction="never">
     </item>
