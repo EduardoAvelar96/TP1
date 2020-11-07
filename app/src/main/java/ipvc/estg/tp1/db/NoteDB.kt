@@ -24,12 +24,8 @@ public abstract class NoteDB : RoomDatabase() {
             INSTANCE?.let { database->
                 scope.launch {
                     var NoteDao = database.noteDao()
-
                     //delete
                     NoteDao.deleteAll()
-
-
-
                 }
             }
         }

@@ -7,4 +7,5 @@
     <string name="Tit">Inserir um título:</string>
     <string name="Tex">Inserir uma nota:</string>
     <string name="Id">Inserir um ID:</string>
+    <string name="RemAll">Remover todas</string>
 </resources>

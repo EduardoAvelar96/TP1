@@ -2,6 +2,7 @@ package ipvc.estg.tp1
 
 import android.app.Activity
 import android.content.Intent
+import android.nfc.NfcAdapter.EXTRA_ID
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
@@ -14,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import ipvc.estg.app.adapters.LineAdapter
 import ipvc.estg.app.adapters.OnNoteItemClickListener
+import ipvc.estg.tp1.AddNote.Companion.EXTRA_REPLY
 import ipvc.estg.tp1.AddNote.Companion.EXTRA_REPLY2
 import ipvc.estg.tp1.entities.Note
 import ipvc.estg.tp1.viewModel.NoteViewModel
@@ -24,6 +26,8 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
     //Definir array recyclerview
     private lateinit var noteViewModel: NoteViewModel
     private val newWordActivityRequestCode = 1
+    private val EditActivityRequestCode = 2
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,11 +63,11 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
                 true
             }
             R.id.opt2->{
-                Toast.makeText(this, "teste2", Toast.LENGTH_SHORT).show()
                 true
             }
             R.id.opt3->{
-                Toast.makeText(this, "teste3", Toast.LENGTH_SHORT).show()
+                noteViewModel.deleteAll()
+                Toast.makeText(applicationContext,"Todas as notas foram apagadas",Toast.LENGTH_LONG).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -76,23 +80,25 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
             val titulo = data?.getStringExtra(AddNote.EXTRA_REPLY)
             val conteudo = data?.getStringExtra(AddNote.EXTRA_REPLY2)
 
-            if (titulo!= null && conteudo != null) {
+            if (titulo != null && conteudo != null) {
                 val note = Note(title = titulo, note = conteudo)
                 noteViewModel.insert(note)
             }
-
         } else {
             Toast.makeText(
-                applicationContext,
+                    applicationContext,
                     "Nota Vazia: Não Inserida",
-                Toast.LENGTH_LONG).show()
+                    Toast.LENGTH_LONG).show()
         }
     }
 
     //clickListener
-    override fun onItemClick(notes: Note, position: Int) {
-        Toast.makeText(this, notes.title, Toast.LENGTH_SHORT).show()
-
+    override fun onItemClick(note: Note) {
+        val intent = Intent( this, EditNote::class.java)
+        intent.putExtra(EditNote.EXTRA_ID, note.id)
+        intent.putExtra(EditNote.EXTRA_REPLY, note.title)
+        intent.putExtra(EditNote.EXTRA_REPLY2, note.note)
+        startActivityForResult(intent, EditActivityRequestCode)
     }
 }
 

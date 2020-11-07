@@ -10,7 +10,7 @@ import ipvc.estg.tp1.R
 import ipvc.estg.tp1.entities.Note
 
 
-class LineAdapter internal constructor(context: Context, var clickListener: OnNoteItemClickListener) : RecyclerView.Adapter<LineAdapter.NoteViewHolder>(){
+class LineAdapter internal constructor(context: Context, val clickListener: OnNoteItemClickListener) : RecyclerView.Adapter<LineAdapter.NoteViewHolder>(){
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
     private var notes = emptyList<Note>()
@@ -20,12 +20,12 @@ class LineAdapter internal constructor(context: Context, var clickListener: OnNo
         val tituloItemView: TextView = itemView.findViewById(R.id.textView2)
 
         //clickListener
-        fun initialize(notes: Note, action:OnNoteItemClickListener){
-            noteItemView.text = notes.note
-            tituloItemView.text = notes.title
+        fun initialize(note: Note, clickListener:OnNoteItemClickListener){
+            noteItemView.text = note.note
+            tituloItemView.text = note.title
 
             itemView.setOnClickListener{
-                action.onItemClick(notes,adapterPosition)
+                clickListener.onItemClick(note)
             }
         }
     }
@@ -36,10 +36,10 @@ class LineAdapter internal constructor(context: Context, var clickListener: OnNo
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder,position: Int){
-    //    val current = notes[position]
-    //    holder.noteItemView.text = current.note
-    //    holder.tituloItemView.text = current.title
-        holder.initialize(notes[position],clickListener)
+        val current = notes[position]
+        holder.noteItemView.text = current.note
+        holder.tituloItemView.text = current.title
+        holder.initialize(current, clickListener)
     }
 
     internal fun setNotes(notes: List<Note>){
@@ -53,7 +53,7 @@ class LineAdapter internal constructor(context: Context, var clickListener: OnNo
 
 //clickListener
 interface OnNoteItemClickListener{
-    fun onItemClick(notes: Note, position: Int)
+    fun onItemClick(note: Note)
 }
 
 

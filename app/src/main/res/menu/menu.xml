@@ -12,7 +12,7 @@
         app:showAsAction="never">
     </item>
     <item android:id="@+id/opt3"
-        android:title="@string/Rem"
+        android:title="@string/RemAll"
         app:showAsAction="never">
     </item>
 </menu>
