@@ -4,9 +4,9 @@
     <string name="Ins">Inserir</string>
     <string name="Rem">Remover</string>
     <string name="Edi">Editar</string>
-    <string name="Tit">Inserir um título:</string>
-    <string name="Tex">Inserir uma nota:</string>
-    <string name="Id">Inserir um ID:</string>
-    <string name="RemAll">Remover todas</string>
+    <string name="Tit">Insira um título:</string>
+    <string name="Tex">Insira uma nota:</string>
+    <string name="Id">Insira um ID:</string>
+    <string name="RemAll">Apagar todas</string>
     <string name="Save">Guardar</string>
 </resources>

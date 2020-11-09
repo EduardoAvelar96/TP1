@@ -50,7 +50,6 @@ class LineAdapter internal constructor(context: Context, val clickListener: OnNo
     }
 
     override fun getItemCount() = notes.size
-
 }
 
 //clickListener

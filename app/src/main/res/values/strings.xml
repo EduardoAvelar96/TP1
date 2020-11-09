@@ -3,9 +3,9 @@
     <string name="Ins">Insert</string>
     <string name="Rem">Remove</string>
     <string name="Edi">Edit</string>
-    <string name="Tit">Insert a title:</string>
-    <string name="Tex">Insert a note:</string>
-    <string name="Id">Insert a ID:</string>
-    <string name="RemAll">Remove all</string>
+    <string name="Tit">Enter a title:</string>
+    <string name="Tex">Enter a note:</string>
+    <string name="Id">Enter a ID:</string>
+    <string name="RemAll">"Delete all "</string>
     <string name="Save">Save</string>
 </resources>

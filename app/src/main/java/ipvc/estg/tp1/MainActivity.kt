@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 noteViewModel.deleteNote(adapter.getNoteAt(viewHolder.layoutPosition))
-                Toast.makeText(applicationContext,"Nota apagada",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"Nota apagada com sucesso",Toast.LENGTH_LONG).show()
             }
         }).attachToRecyclerView(recyclerView)
 
@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
             }
             R.id.opt2->{
                 noteViewModel.deleteAll()
-                Toast.makeText(applicationContext,"Todas as notas foram apagadas",Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"Todas as notas foram apagadas com sucesso",Toast.LENGTH_LONG).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -86,6 +86,7 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         //ADICIONAR NOTA
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             val titulo = data?.getStringExtra(AddNote.EXTRA_REPLY)
@@ -101,6 +102,7 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
                     "Nota Vazia: Não Inserida",
                     Toast.LENGTH_LONG).show()
         }
+
         //EDITAR NOTA
         if (requestCode == EditActivityRequestCode && resultCode == RESULT_OK) {
             val id = data?.getIntExtra( EditNote.EXTRA_ID, -1 )
@@ -125,7 +127,5 @@ class MainActivity : AppCompatActivity(), OnNoteItemClickListener {
         intent.putExtra(EditNote.EXTRA_REPLY2, note.note)
         startActivityForResult(intent, EditActivityRequestCode)
     }
-
-
 }
 
