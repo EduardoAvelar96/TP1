@@ -8,4 +8,9 @@
     <string name="Id">Enter a ID:</string>
     <string name="RemAll">"Delete all "</string>
     <string name="Save">Save</string>
+    <string name="NoteDel">Note deleted with success</string>
+    <string name="AllDel">All notes deleted with success</string>
+    <string name="Empty">Empty fields</string>
+    <string name="NoteEdit">Note edit with success</string>
+    <string name="title_activity_maps">Map</string>
 </resources>

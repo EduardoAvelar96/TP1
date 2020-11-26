@@ -9,4 +9,8 @@
     <string name="Id">Insira um ID:</string>
     <string name="RemAll">Apagar todas</string>
     <string name="Save">Guardar</string>
+    <string name="NoteDel">Nota apagada com sucesso</string>
+    <string name="AllDel">Todas as notas apagadas com sucesso</string>
+    <string name="Empty">Campos vazios</string>
+    <string name="NoteEdit">Nota editada com sucesso</string>
 </resources>
