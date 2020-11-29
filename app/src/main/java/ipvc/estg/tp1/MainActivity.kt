@@ -49,8 +49,7 @@ class MainActivity : AppCompatActivity() {
     fun getSingle(view: View) {
 
         val request = ServiceBuilder.buildService(EndPoints::class.java)
-        val call =
-            request.getUserById(2) // estaticamente o valor 2. deverá depois passar a ser dinamico
+        val call = request.getUserById(2) // estaticamente o valor 2. deverá depois passar a ser dinamico
 
         call.enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {

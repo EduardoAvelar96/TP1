@@ -13,4 +13,5 @@
     <string name="AllDel">Todas as notas apagadas com sucesso</string>
     <string name="Empty">Campos vazios</string>
     <string name="NoteEdit">Nota editada com sucesso</string>
+    <string name="title_activity_maps">Mapa</string>
 </resources>
