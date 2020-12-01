@@ -1,11 +1,17 @@
 package ipvc.estg.tp1
 
+import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.location.Geocoder
 import android.location.Location
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -41,6 +47,34 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var continenteLat: Double = 0.0
     private var continenteLong: Double = 0.0
 
+
+    override fun onCreateOptionsMenu(menu_maps: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_maps, menu_maps)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            //logout
+            R.id.btn3 -> {
+                val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE )
+                with ( sharedPref.edit() ) {
+                    putBoolean(getString(R.string.automatic_login), false )
+                    putString(getString(R.string.username_login), null )
+                    putString(getString(R.string.password_login), null )
+                    commit()
+                }
+
+                //volta a atividade login (Main)
+                val intent = Intent(this@MapsActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

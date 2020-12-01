@@ -14,4 +14,11 @@
     <string name="Empty">Campos vazios</string>
     <string name="NoteEdit">Nota editada com sucesso</string>
     <string name="title_activity_maps">Mapa</string>
+    <string name="User_miss">Campo user vazio</string>
+    <string name="Pass_miss">Campo password vazio</string>
+    <string name="Login_miss">Login incorreto</string>
+    <string name="Login">Bem-vindo</string>
+    <string name="LoginBTN">Login</string>
+    <string name="NotesBTN">Notas</string>
+    <string name="Logout">Sair</string>
 </resources>

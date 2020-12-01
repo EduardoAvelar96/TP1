@@ -13,4 +13,15 @@
     <string name="Empty">Empty fields</string>
     <string name="NoteEdit">Note edit with success</string>
     <string name="title_activity_maps">Map</string>
+    <string name="User_miss">User field empty</string>
+    <string name="Pass_miss">Password field empty</string>
+    <string name="Login_miss">Incorrect login</string>
+    <string name="Login">Welcome</string>
+    <string name="LoginBTN">Login</string>
+    <string name="NotesBTN">Notes</string>
+    <string name="preference_file_key" translatable="false">preference_file_key</string>
+    <string name="username_login" translatable="false">username_login</string>
+    <string name="password_login" translatable="false">password_login</string>
+    <string name="automatic_login" translatable="false">automatic_login</string>
+    <string name="Logout">Logout</string>
 </resources>

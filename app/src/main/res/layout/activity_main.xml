@@ -42,14 +42,6 @@
             android:text="MAP">
         </Button>
 
-        <Button
-            android:layout_width="0dp"
-            android:onClick="notes"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="Notas">
-        </Button>
-
     </LinearLayout>
 
 

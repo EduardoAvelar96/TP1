@@ -75,7 +75,7 @@ class NotesActivity : AppCompatActivity(), OnNoteItemClickListener {
             }
             R.id.opt2->{
                 noteViewModel.deleteAll()
-                Toast.makeText(applicationContext,"@id/AllDel", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,"@string/AllDel", Toast.LENGTH_LONG).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)

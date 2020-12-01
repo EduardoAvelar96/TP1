@@ -93,10 +93,4 @@ class MainActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
-
-    fun notes(view: View) {
-        val intent = Intent(this@MainActivity, NotesActivity::class.java).apply {
-        }
-        startActivity(intent)
-    }
 }

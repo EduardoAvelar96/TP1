@@ -57,8 +57,18 @@
         android:layout_marginBottom="15dp"
         android:onClick="login"
         android:background="#fff"
-        android:text="Login"
+        android:text="@string/LoginBTN"
         android:textAllCaps="false"
         android:textColor="#000" />
+
+    <Button
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:onClick="notes"
+        android:text="@string/NotesBTN" />
+
 
 </RelativeLayout>
