@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class RequestType : AppCompatActivity() {
 
+    //commit
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,7 +23,7 @@ class RequestType : AppCompatActivity() {
             button1.setOnClickListener {
                 val replyIntent = Intent()
                 replyIntent.putExtra(EXTRA_REPLY, 1)
-                setResult(Activity.RESULT_OK, replyIntent)
+                setResult(Activity.RESULT_OK, replyIntent
                 finish()
             }
         button2.setOnClickListener {
