@@ -8,6 +8,6 @@ import retrofit2.http.POST
 interface LoginEndPoints {
 
     @FormUrlEncoded
-    @POST("/myslim/api/login/create")
+    @POST("/myslim/api/login")
     fun login(@Field("name") username: String, @Field("password") password: String?): Call<LoginOutputPost>
 }

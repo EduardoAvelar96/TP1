@@ -3,4 +3,13 @@
     <item android:id="@+id/btn3"
         android:title="@string/Logout">
     </item>
+    <item android:id="@+id/btn4"
+        android:title="@string/Ins">
+    </item>
+    <item android:id="@+id/btn5"
+        android:title="@string/Update">
+    </item>
+    <item android:id="@+id/btn6"
+        android:title="@string/Rem">
+    </item>
 </menu>

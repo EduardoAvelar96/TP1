@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.maps.GoogleMap
 import ipvc.estg.tp1.R
 import ipvc.estg.tp1.api.User
 import ipvc.estg.tp1.entities.Note
@@ -56,9 +57,8 @@ class LineAdapter internal constructor(context: Context, val clickListener: OnNo
 //clickListener
 interface OnNoteItemClickListener{
     fun onItemClick(note: Note)
-
-
 }
+
 
 
 

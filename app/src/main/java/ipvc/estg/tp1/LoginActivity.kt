@@ -50,6 +50,11 @@ class LoginActivity : AppCompatActivity() {
         val username = userEditTextView.text.toString()
         val password = passEditTextView.text.toString()
 
+        //ENCRIPTAR A PASSWORD
+        val secretKey: String = "662ede816988e58fb6d057d9d85605e0"
+        var encryptor = AESencrypt()
+        val encryptedValue: String? = encryptor.encrypt(password, secretKey)
+
         //Verifica se as caixas de texto têm conteudo
         if (TextUtils.isEmpty(username)) {
             Toast.makeText(this, R.string.User_miss, Toast.LENGTH_LONG).show()
@@ -60,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
         } else {
             //fazer a ligaçao
             val request = ServiceBuilder.buildService(LoginEndPoints::class.java)
-            val call = request.login(username, password)
+            val call = request.login(username, encryptedValue)
             call.enqueue(object : Callback<LoginOutputPost> {
                 override fun onResponse(call: Call<LoginOutputPost>, response: Response<LoginOutputPost>) {
 
@@ -77,7 +82,7 @@ class LoginActivity : AppCompatActivity() {
                         with ( sharedPref.edit() ) {
                             putBoolean(getString(R.string.automatic_login), true)
                             putString(getString(R.string.username_login), username )
-                            putString(getString(R.string.password_login), password )
+                            putInt(getString(R.string.id_login), p.data.ID)
                             commit()
                         }
 

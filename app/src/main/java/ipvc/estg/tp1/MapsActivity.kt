@@ -1,5 +1,6 @@
 package ipvc.estg.tp1
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -21,16 +22,23 @@ import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 import ipvc.estg.tp1.api.EndPoints
+import ipvc.estg.tp1.api.OutputPost
 import ipvc.estg.tp1.api.ServiceBuilder
 import ipvc.estg.tp1.api.User
+import ipvc.estg.tp1.entities.Note
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private val newWordActivityRequestCode = 1
+    private var Tipo:Int = 0
+
 
     private lateinit var mMap: GoogleMap
     private lateinit var users: List<User>
@@ -47,38 +55,10 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private var continenteLat: Double = 0.0
     private var continenteLong: Double = 0.0
 
-
-    override fun onCreateOptionsMenu(menu_maps: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.menu_maps, menu_maps)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            //logout
-            R.id.btn3 -> {
-                val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE )
-                with ( sharedPref.edit() ) {
-                    putBoolean(getString(R.string.automatic_login), false )
-                    putString(getString(R.string.username_login), null )
-                    putString(getString(R.string.password_login), null )
-                    commit()
-                }
-
-                //volta a atividade login (Main)
-                val intent = Intent(this@MapsActivity, LoginActivity::class.java)
-                startActivity(intent)
-                finish()
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
+
 
         //ponto fixo para medir a distância
         continenteLat = 41.7043
@@ -88,7 +68,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        //initialize fusedLocationClient
+        //initialize fusedLocationClient (Request Localização)
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
 
@@ -111,8 +91,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 findViewById<TextView>(R.id.txtdistancia).setText("Distância: " + calculateDistance(
                     lastLocation.latitude, lastLocation.longitude,
                     continenteLat, continenteLong).toString())
-
-                Log.d("**** Eduardo", "new location received - " + loc.latitude + " -" + loc.longitude)
             }
         }
 
@@ -126,14 +104,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 if (response.isSuccessful) {
                     users = response.body()!!
-                    for (user in users) {
+                    for (problems in users) {
                         position = LatLng(
-                            user.address.geo.lat.toString().toDouble(),
-                            user.address.geo.lng.toString().toDouble()
+                            problems.lat.toDouble(),
+                            problems.lng.toDouble()
                         )
                         mMap.addMarker(
                             MarkerOptions().position(position)
-                                .title(user.address.suite + " - " + user.address.city)
+                                .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
                         )
                     }
                 }
@@ -160,11 +139,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Add a marker in Sydney and move the camera
-        /*val sydney = LatLng(-34.0, 151.0)
-        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Sydney"))
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney))*/
         setUpMap()
+
     }
 
     companion object {
@@ -175,7 +151,6 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         private const val REQUEST_CHECK_SETTINGS = 2
     }
 
-
     //Ultima localização obtida
     fun setUpMap() {
         if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -184,14 +159,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         } else {
             //Animação da posição
             mMap.isMyLocationEnabled = true
-            // 2
             fusedLocationClient.lastLocation.addOnSuccessListener(this) { location ->
                 // Got last known location. In some rare situations this can be null.
-                // 3
                 if (location != null) {
                     lastLocation = location
-                    Toast.makeText(this@MapsActivity, lastLocation.toString(), Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this@MapsActivity, lastLocation.toString(), Toast.LENGTH_SHORT).show()
                     val currentLatLng = LatLng(location.latitude, location.longitude)
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                 }
@@ -240,5 +212,73 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         Location.distanceBetween(lat1, lng1, lat2, lng2, results)
         // distance in meter
         return results[0]
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
+            Tipo = data?.getIntExtra(RequestType.EXTRA_REPLY, 0)!!
+
+            val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+            val Value = sharedPref.getInt(getString(R.string.id_login), 0)
+
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.postTest(Value,Tipo,lastLocation.latitude.toString(),lastLocation.longitude.toString())
+
+            call.enqueue(object : Callback<OutputPost> {
+                override fun onResponse(call: Call<OutputPost>, response: Response<OutputPost>) {
+                    if (response.isSuccessful) {
+                        val c: OutputPost = response.body()!!
+                        Toast.makeText(this@MapsActivity, c.MSG, Toast.LENGTH_SHORT).show()
+                    }
+                }
+                override fun onFailure(call: Call<OutputPost>, t: Throwable) {
+                    Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        } else if(requestCode == newWordActivityRequestCode){
+            Toast.makeText(
+                applicationContext,"@id/Empty", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu_maps: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu_maps, menu_maps)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            //logout
+            R.id.btn3 -> {
+                val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE )
+                with ( sharedPref.edit() ) {
+                    putBoolean(getString(R.string.automatic_login), false )
+                    putString(getString(R.string.username_login), null )
+                    putInt(getString(R.string.id_login), 0)
+                    commit()
+                }
+
+                //volta a atividade login
+                val intent = Intent(this@MapsActivity, LoginActivity::class.java)
+                startActivity(intent)
+                finish()
+                true
+            }
+            R.id.btn4 -> {
+                val intent = Intent(this@MapsActivity, RequestType::class.java)
+                startActivityForResult(intent,newWordActivityRequestCode)
+                true
+            }
+            R.id.btn5 -> {
+                true
+            }
+            R.id.btn6 -> {
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 }

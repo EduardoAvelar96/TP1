@@ -21,4 +21,9 @@
     <string name="LoginBTN">Login</string>
     <string name="NotesBTN">Notas</string>
     <string name="Logout">Sair</string>
+    <string name="Update">Atualizar</string>
+    <string name="type">Insira um tipo (numero):</string>
+    <string name="accident">1- Acidente</string>
+    <string name="construction">2- Obras</string>
+    <string name="signage">3- Falta de sinalização</string>
 </resources>

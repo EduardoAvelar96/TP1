@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import ipvc.estg.tp1.R
 import ipvc.estg.tp1.api.User
-
+/*
 class UserAdapter(val users: List<User>): RecyclerView.Adapter<UsersViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UsersViewHolder {
@@ -36,3 +36,5 @@ class UsersViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         email.text = email.text
     }
 }
+
+ */

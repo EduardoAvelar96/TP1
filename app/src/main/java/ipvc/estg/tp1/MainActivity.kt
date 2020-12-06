@@ -6,7 +6,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import ipvc.estg.tp1.adapter.UserAdapter
+//import ipvc.estg.tp1.adapter.UserAdapter
 import ipvc.estg.tp1.R
 import kotlinx.android.synthetic.main.activity_main.*
 import ipvc.estg.tp1.api.EndPoints
@@ -18,7 +18,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
-
+/*
 
     // solve internet issue on emulator
     // https://medium.com/@cafonsomota/android-emulator-when-theres-no-connection-to-the-internet-129e8b63b7ce'
@@ -93,4 +93,6 @@ class MainActivity : AppCompatActivity() {
         }
         startActivity(intent)
     }
+    */
+
 }
