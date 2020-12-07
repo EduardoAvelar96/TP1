@@ -26,4 +26,9 @@
     <string name="accident">1- Acidente</string>
     <string name="construction">2- Obras</string>
     <string name="signage">3- Falta de sinalização</string>
+    <string name="SemMarker">Sem marcador desse tipo</string>
+    <string name="FilterDistance">Filtrar por distância</string>
+    <string name="Reset">Resetar pontos</string>
+    <string name="FilterType">Filtrar por tipo</string>
+    <string name="Dist">Distância (Km)</string>
 </resources>

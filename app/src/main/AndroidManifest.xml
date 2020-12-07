@@ -36,6 +36,7 @@
         <activity android:name=".EditNote" />
         <activity android:name=".NotesActivity" />
         <activity android:name=".RequestType" />
+        <activity android:name=".RequestDist" />
         <activity android:name=".MainActivity" />
         <activity android:name=".LoginActivity">
             <intent-filter>

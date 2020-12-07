@@ -27,18 +27,6 @@
         android:textColor="#ffffff">
     </TextView>
 
-    <TextView
-        android:id="@+id/txtdistancia"
-        android:layout_width="match_parent"
-        android:padding="5dp"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginBottom="2dp"
-        android:layout_marginRight="10dp"
-        android:textColor="#ffffff"
-        android:background="#000000"
-        android:layout_below="@id/txtcoordenadas">
-    </TextView>
 
     <TextView
         android:id="@+id/txtmorada"
@@ -49,7 +37,7 @@
         android:layout_height="wrap_content"
         android:background="#000000"
         android:layout_marginLeft="10dp"
-        android:layout_below="@id/txtdistancia">
+        android:layout_below="@id/txtcoordenadas">
     </TextView>
 
 </RelativeLayout>

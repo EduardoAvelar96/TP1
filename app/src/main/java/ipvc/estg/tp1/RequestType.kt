@@ -11,7 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 
 class RequestType : AppCompatActivity() {
 
-    
+
 
     public override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

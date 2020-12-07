@@ -7,9 +7,12 @@
         android:title="@string/Ins">
     </item>
     <item android:id="@+id/btn5"
-        android:title="@string/Update">
+        android:title="@string/FilterType">
     </item>
     <item android:id="@+id/btn6"
-        android:title="@string/Rem">
+        android:title="@string/FilterDistance">
+    </item>
+    <item android:id="@+id/btn7"
+        android:title="@string/Reset">
     </item>
 </menu>

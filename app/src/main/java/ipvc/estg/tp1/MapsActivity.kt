@@ -33,10 +33,13 @@ import ipvc.estg.tp1.entities.Note
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Math.abs
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private val newWordActivityRequestCode = 1
+    private val newWordActivityRequestCode2 = 2
+    private val newWordActivityRequestCode3 = 3
     private var Tipo:Int = 0
 
 
@@ -59,10 +62,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
 
-
         //ponto fixo para medir a distância
-        continenteLat = 41.7043
-        continenteLong = -8.8148
+//        continenteLat = lastLocation.latitude
+  //      continenteLong = lastLocation.longitude
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -88,9 +90,9 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 findViewById<TextView>(R.id.txtmorada).setText("Morada: " + address)
 
                 //distância
-                findViewById<TextView>(R.id.txtdistancia).setText("Distância: " + calculateDistance(
-                    lastLocation.latitude, lastLocation.longitude,
-                    continenteLat, continenteLong).toString())
+                //findViewById<TextView>(R.id.txtdistancia).setText("Distância: " + calculateDistance(
+                //    lastLocation.latitude, lastLocation.longitude,
+                //    continenteLat, continenteLong).toString())
             }
         }
 
@@ -237,10 +239,78 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
             })
 
-        } else if(requestCode == newWordActivityRequestCode){
-            Toast.makeText(
-                applicationContext,"@id/Empty", Toast.LENGTH_LONG).show()
-        }
+        } else if(requestCode == newWordActivityRequestCode2&& resultCode == Activity.RESULT_OK){
+            Tipo = data?.getIntExtra(RequestType.EXTRA_REPLY, 0)!!
+            var position: LatLng
+
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.filtrar(Tipo)
+
+            call.enqueue(object : Callback<List<User>> {
+                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+                    if (response.isSuccessful) {
+                        mMap.clear();
+                        users = response.body()!!
+                        for(problems in users) {
+                            position = LatLng(
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            mMap.addMarker(
+                                MarkerOptions().position(position)
+                                    .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                    .icon(BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_AZURE)))
+                        }
+                        createLocationRequest()
+                    }
+                }
+                override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                    Toast.makeText(this@MapsActivity, R.string.SemMarker, Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        }else if(requestCode == newWordActivityRequestCode3&& resultCode == Activity.RESULT_OK){
+
+            val km = data?.getDoubleExtra(RequestType.EXTRA_REPLY, 0.0)!!
+            val meters = km * 1000
+
+            mMap.clear();
+            val request = ServiceBuilder.buildService(EndPoints::class.java)
+            val call = request.getUsers()
+            var position: LatLng
+
+            call.enqueue(object : Callback<List<User>> {
+                override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+                    if (response.isSuccessful) {
+                        users = response.body()!!
+                        for (problems in users) {
+                            val dist = calculateDistance(lastLocation.latitude, lastLocation.longitude,problems.lat.toDouble(), problems.lng.toDouble())
+
+                            println("diff "+dist)
+                            if(dist < meters){
+                                position = LatLng(
+                                    problems.lat.toDouble(),
+                                    problems.lng.toDouble())
+                                mMap.addMarker(MarkerOptions().position(position)
+                                        .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
+                            }
+                        }
+                        createLocationRequest()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                    Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+
+        }else
+        {
+                Toast.makeText(
+                    applicationContext,"@id/Empty", Toast.LENGTH_LONG).show()
+            }
     }
 
     override fun onCreateOptionsMenu(menu_maps: Menu): Boolean {
@@ -273,9 +343,44 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 true
             }
             R.id.btn5 -> {
+                val intent = Intent(this@MapsActivity, RequestType::class.java)
+                startActivityForResult(intent,newWordActivityRequestCode2)
                 true
             }
             R.id.btn6 -> {
+                val intent = Intent(this@MapsActivity, RequestDist::class.java)
+                startActivityForResult(intent,newWordActivityRequestCode3)
+                true
+            }
+            R.id.btn7 -> {
+                mMap.clear();
+                val request = ServiceBuilder.buildService(EndPoints::class.java)
+                val call = request.getUsers()
+                var position: LatLng
+
+                // ADD MARKERS
+                call.enqueue(object : Callback<List<User>> {
+                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+                        if (response.isSuccessful) {
+                            users = response.body()!!
+                            for (problems in users) {
+                                position = LatLng(
+                                    problems.lat.toDouble(),
+                                    problems.lng.toDouble()
+                                )
+                                mMap.addMarker(
+                                    MarkerOptions().position(position)
+                                        .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                    //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+                                )
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
                 true
             }
             else -> super.onOptionsItemSelected(item)

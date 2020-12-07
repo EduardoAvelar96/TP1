@@ -29,4 +29,9 @@
     <string name="accident">1- Accident</string>
     <string name="construction">2- Construction</string>
     <string name="signage">3- Lack of signage</string>
+    <string name="SemMarker">No marker for that type</string>
+    <string name="Reset">Reset all markers</string>
+    <string name="FilterType">Filter by type</string>
+    <string name="FilterDistance">"Filter by distance "</string>
+    <string name="Dist">Distance (Km)</string>
 </resources>
