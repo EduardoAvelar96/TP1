@@ -31,4 +31,5 @@
     <string name="Reset">Resetar pontos</string>
     <string name="FilterType">Filtrar por tipo</string>
     <string name="Dist">Distância (Km)</string>
+    <string name="coordenadas">Coordenadas:</string>
 </resources>

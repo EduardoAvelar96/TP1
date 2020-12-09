@@ -34,4 +34,5 @@
     <string name="FilterType">Filter by type</string>
     <string name="FilterDistance">"Filter by distance "</string>
     <string name="Dist">Distance (Km)</string>
+    <string name="coordenadas">Coordinates:</string>
 </resources>

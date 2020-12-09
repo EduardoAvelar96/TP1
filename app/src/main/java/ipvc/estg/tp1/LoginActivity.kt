@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
         //Chama o sharedPref
         val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE )
 
-        //Vericia se o utilizador ainda está logado
+        //Verifica se o utilizador ainda está logado
         val automatic_login = sharedPref.getBoolean(getString(R.string.automatic_login), false)
 
         if( automatic_login ) {

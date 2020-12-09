@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#fff"
+    tools:context=".LoginActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="Login"
+        android:textAppearance="@style/Base.TextAppearance.AppCompat.Headline"
+        android:textColor="#000"/>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:background="#ffff"
+        android:orientation="vertical"
+        android:padding="10dp">
+
+        <EditText
+            android:id="@+id/edit_user"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:hint="email"
+            android:inputType="textEmailAddress" />
+
+        <EditText
+            android:id="@+id/edit_pass"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
+            android:hint="password"
+            android:inputType="textPassword" />
+
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/buttonLogin"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:onClick="login"
+        android:background="#fff"
+        android:text="@string/LoginBTN"
+        android:textAllCaps="false"
+        android:textColor="#000" />
+
+    <Button
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="false"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="40dp"
+        android:onClick="notes"
+        android:text="@string/NotesBTN" />
+
+
+</RelativeLayout>

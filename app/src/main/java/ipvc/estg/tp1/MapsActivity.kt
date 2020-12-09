@@ -5,43 +5,53 @@ import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
+import android.content.res.Resources.NotFoundException
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.location.Geocoder
 import android.location.Location
-import androidx.appcompat.app.AppCompatActivity
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
-
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.MarkerOptions
 import ipvc.estg.tp1.api.EndPoints
 import ipvc.estg.tp1.api.OutputPost
 import ipvc.estg.tp1.api.ServiceBuilder
 import ipvc.estg.tp1.api.User
-import ipvc.estg.tp1.entities.Note
+import kotlinx.android.synthetic.main.activity_maps.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Math.abs
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback,SensorEventListener {
+
+    var sensor: Sensor? = null
+    var sensorManager: SensorManager? = null
+    var isRunning = false
+
 
     private val newWordActivityRequestCode = 1
     private val newWordActivityRequestCode2 = 2
     private val newWordActivityRequestCode3 = 3
-    private var Tipo:Int = 0
-
+    private var Tipo: Int = 0
 
     private lateinit var mMap: GoogleMap
     private lateinit var users: List<User>
@@ -54,17 +64,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     private lateinit var locationCallback: LocationCallback
     private lateinit var locationRequest: LocationRequest
 
-    //coordenadas fixas para calculo de distancia
-    private var continenteLat: Double = 0.0
-    private var continenteLong: Double = 0.0
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_maps)
 
-        //ponto fixo para medir a distância
-//        continenteLat = lastLocation.latitude
-  //      continenteLong = lastLocation.longitude
+
+        sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        sensor = sensorManager!!.getDefaultSensor(Sensor.TYPE_LIGHT)
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
@@ -80,8 +86,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 super.onLocationResult(p0)
                 lastLocation = p0.lastLocation
                 var loc = LatLng(lastLocation.latitude, lastLocation.longitude)
-                //mMap.addMarker(MarkerOptions().position(loc).title("Marker"))
-                //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(loc, 15.0f))
+
                 //preenche as coordenadas
                 findViewById<TextView>(R.id.txtcoordenadas).setText("Lat: " + loc.latitude + " - Long: " + loc.longitude)
 
@@ -89,17 +94,19 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 val address = getAddress(lastLocation.latitude, lastLocation.longitude)
                 findViewById<TextView>(R.id.txtmorada).setText("Morada: " + address)
 
-                //distância
-                //findViewById<TextView>(R.id.txtdistancia).setText("Distância: " + calculateDistance(
-                //    lastLocation.latitude, lastLocation.longitude,
-                //    continenteLat, continenteLong).toString())
             }
         }
 
-        //call the service and add markers
         val request = ServiceBuilder.buildService(EndPoints::class.java)
         val call = request.getUsers()
         var position: LatLng
+        var position2: LatLng
+
+        val sharedPref: SharedPreferences = getSharedPreferences(
+            getString(R.string.preference_file_key),
+            Context.MODE_PRIVATE
+        )
+        val Value = sharedPref.getInt(getString(R.string.id_login), 0)
 
         // ADD MARKERS
         call.enqueue(object : Callback<List<User>> {
@@ -107,21 +114,37 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 if (response.isSuccessful) {
                     users = response.body()!!
                     for (problems in users) {
-                        position = LatLng(
-                            problems.lat.toDouble(),
-                            problems.lng.toDouble()
-                        )
-                        mMap.addMarker(
-                            MarkerOptions().position(position)
-                                .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
-                                //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                        )
+                        if (problems.ID == Value) {
+                            position = LatLng(
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            mMap.addMarker(
+                                MarkerOptions().position(position)
+                                    .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                    .icon(
+                                        BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_AZURE
+                                        )
+                                    )
+                            )
+                        } else {
+                            position2 = LatLng(
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            mMap.addMarker(
+                                MarkerOptions().position(position2)
+                                    .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                            )
+                        }
                     }
                 }
             }
 
             override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@MapsActivity, R.string.Empty, Toast.LENGTH_SHORT).show()
+                mMap.clear()
             }
         })
 
@@ -155,8 +178,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     //Ultima localização obtida
     fun setUpMap() {
-        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), LOCATION_PERMISSION_REQUEST_CODE)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
             return
         } else {
             //Animação da posição
@@ -165,7 +196,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 // Got last known location. In some rare situations this can be null.
                 if (location != null) {
                     lastLocation = location
-                    Toast.makeText(this@MapsActivity, lastLocation.toString(), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MapsActivity, lastLocation.toString(), Toast.LENGTH_SHORT)
+                        .show()
                     val currentLatLng = LatLng(location.latitude, location.longitude)
                     mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLng, 12f))
                 }
@@ -174,14 +206,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun startLocationUpdates() {
-        if (ActivityCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
                 arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                LOCATION_PERMISSION_REQUEST_CODE)
+                LOCATION_PERMISSION_REQUEST_CODE
+            )
             return
         }
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null /* Looper */)
+        fusedLocationClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback,
+            null /* Looper */
+        )
     }
 
     private fun createLocationRequest() {
@@ -194,12 +235,14 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onPause() {
         super.onPause()
         fusedLocationClient.removeLocationUpdates(locationCallback)
+        sensorManager!!.unregisterListener(this)
         Log.d("**** Eduardo", "onPause - removeLocationUpdates")
     }
 
     public override fun onResume() {
         super.onResume()
         startLocationUpdates()
+        sensorManager!!.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
         Log.d("**** Eduardo", "onResume - startLocationUpdates")
     }
 
@@ -221,25 +264,35 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (requestCode == newWordActivityRequestCode && resultCode == Activity.RESULT_OK) {
             Tipo = data?.getIntExtra(RequestType.EXTRA_REPLY, 0)!!
 
-            val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
+            val sharedPref: SharedPreferences = getSharedPreferences(
+                getString(R.string.preference_file_key),
+                Context.MODE_PRIVATE
+            )
             val Value = sharedPref.getInt(getString(R.string.id_login), 0)
 
             val request = ServiceBuilder.buildService(EndPoints::class.java)
-            val call = request.postTest(Value,Tipo,lastLocation.latitude.toString(),lastLocation.longitude.toString())
+            val call = request.postTest(
+                Value,
+                Tipo,
+                lastLocation.latitude.toString(),
+                lastLocation.longitude.toString()
+            )
 
             call.enqueue(object : Callback<OutputPost> {
                 override fun onResponse(call: Call<OutputPost>, response: Response<OutputPost>) {
                     if (response.isSuccessful) {
                         val c: OutputPost = response.body()!!
                         Toast.makeText(this@MapsActivity, c.MSG, Toast.LENGTH_SHORT).show()
+                        resetMarker()
                     }
                 }
+
                 override fun onFailure(call: Call<OutputPost>, t: Throwable) {
-                    Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MapsActivity, R.string.Empty, Toast.LENGTH_SHORT).show()
                 }
             })
 
-        } else if(requestCode == newWordActivityRequestCode2&& resultCode == Activity.RESULT_OK){
+        } else if (requestCode == newWordActivityRequestCode2 && resultCode == Activity.RESULT_OK) {
             Tipo = data?.getIntExtra(RequestType.EXTRA_REPLY, 0)!!
             var position: LatLng
 
@@ -251,7 +304,7 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (response.isSuccessful) {
                         mMap.clear();
                         users = response.body()!!
-                        for(problems in users) {
+                        for (problems in users) {
                             position = LatLng(
                                 problems.lat.toDouble(),
                                 problems.lng.toDouble()
@@ -259,18 +312,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                             mMap.addMarker(
                                 MarkerOptions().position(position)
                                     .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
-                                    .icon(BitmapDescriptorFactory.defaultMarker(
-                                            BitmapDescriptorFactory.HUE_AZURE)))
+                                    .icon(
+                                        BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_ROSE
+                                        )
+                                    )
+                            )
                         }
                         createLocationRequest()
                     }
                 }
+
                 override fun onFailure(call: Call<List<User>>, t: Throwable) {
                     Toast.makeText(this@MapsActivity, R.string.SemMarker, Toast.LENGTH_SHORT).show()
                 }
             })
 
-        }else if(requestCode == newWordActivityRequestCode3&& resultCode == Activity.RESULT_OK){
+        } else if (requestCode == newWordActivityRequestCode3 && resultCode == Activity.RESULT_OK) {
 
             val km = data?.getDoubleExtra(RequestType.EXTRA_REPLY, 0.0)!!
             val meters = km * 1000
@@ -285,16 +343,26 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                     if (response.isSuccessful) {
                         users = response.body()!!
                         for (problems in users) {
-                            val dist = calculateDistance(lastLocation.latitude, lastLocation.longitude,problems.lat.toDouble(), problems.lng.toDouble())
-
-                            println("diff "+dist)
-                            if(dist < meters){
+                            val dist = calculateDistance(
+                                lastLocation.latitude,
+                                lastLocation.longitude,
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            if (dist < meters) {
                                 position = LatLng(
                                     problems.lat.toDouble(),
-                                    problems.lng.toDouble())
-                                mMap.addMarker(MarkerOptions().position(position)
-                                        .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
-                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE)))
+                                    problems.lng.toDouble()
+                                )
+                                mMap.addMarker(
+                                    MarkerOptions().position(position)
+                                        .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                        .icon(
+                                            BitmapDescriptorFactory.defaultMarker(
+                                                BitmapDescriptorFactory.HUE_ROSE
+                                            )
+                                        )
+                                )
                             }
                         }
                         createLocationRequest()
@@ -302,15 +370,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
                 }
 
                 override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                    Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@MapsActivity, R.string.Empty, Toast.LENGTH_SHORT).show()
                 }
             })
 
-        }else
-        {
-                Toast.makeText(
-                    applicationContext,"@id/Empty", Toast.LENGTH_LONG).show()
-            }
+        } else {
+            Toast.makeText(
+                applicationContext, R.string.Empty, Toast.LENGTH_LONG
+            ).show()
+        }
     }
 
     override fun onCreateOptionsMenu(menu_maps: Menu): Boolean {
@@ -323,10 +391,13 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         return when (item.itemId) {
             //logout
             R.id.btn3 -> {
-                val sharedPref: SharedPreferences = getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE )
-                with ( sharedPref.edit() ) {
-                    putBoolean(getString(R.string.automatic_login), false )
-                    putString(getString(R.string.username_login), null )
+                val sharedPref: SharedPreferences = getSharedPreferences(
+                    getString(R.string.preference_file_key),
+                    Context.MODE_PRIVATE
+                )
+                with(sharedPref.edit()) {
+                    putBoolean(getString(R.string.automatic_login), false)
+                    putString(getString(R.string.username_login), null)
                     putInt(getString(R.string.id_login), 0)
                     commit()
                 }
@@ -339,51 +410,100 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
             }
             R.id.btn4 -> {
                 val intent = Intent(this@MapsActivity, RequestType::class.java)
-                startActivityForResult(intent,newWordActivityRequestCode)
+                startActivityForResult(intent, newWordActivityRequestCode)
+
                 true
             }
             R.id.btn5 -> {
                 val intent = Intent(this@MapsActivity, RequestType::class.java)
-                startActivityForResult(intent,newWordActivityRequestCode2)
+                startActivityForResult(intent, newWordActivityRequestCode2)
                 true
             }
             R.id.btn6 -> {
                 val intent = Intent(this@MapsActivity, RequestDist::class.java)
-                startActivityForResult(intent,newWordActivityRequestCode3)
+                startActivityForResult(intent, newWordActivityRequestCode3)
                 true
             }
             R.id.btn7 -> {
-                mMap.clear();
-                val request = ServiceBuilder.buildService(EndPoints::class.java)
-                val call = request.getUsers()
-                var position: LatLng
-
-                // ADD MARKERS
-                call.enqueue(object : Callback<List<User>> {
-                    override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
-                        if (response.isSuccessful) {
-                            users = response.body()!!
-                            for (problems in users) {
-                                position = LatLng(
-                                    problems.lat.toDouble(),
-                                    problems.lng.toDouble()
-                                )
-                                mMap.addMarker(
-                                    MarkerOptions().position(position)
-                                        .title("Coordenadas: "+ problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
-                                    //.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
-                                )
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<List<User>>, t: Throwable) {
-                        Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
-                    }
-                })
+                resetMarker()
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    fun resetMarker() {
+        mMap.clear();
+        val request = ServiceBuilder.buildService(EndPoints::class.java)
+        val call = request.getUsers()
+        var position: LatLng
+        var position2: LatLng
+
+        val sharedPref: SharedPreferences = getSharedPreferences(
+            getString(R.string.preference_file_key),
+            Context.MODE_PRIVATE
+        )
+        val Value = sharedPref.getInt(getString(R.string.id_login), 0)
+
+        // ADD MARKERS
+        call.enqueue(object : Callback<List<User>> {
+            override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
+                if (response.isSuccessful) {
+                    users = response.body()!!
+                    for (problems in users) {
+                        if (problems.ID == Value) {
+                            position = LatLng(
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            mMap.addMarker(
+                                MarkerOptions().position(position)
+                                    .title("Coordenadas:" + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                                    .icon(
+                                        BitmapDescriptorFactory.defaultMarker(
+                                            BitmapDescriptorFactory.HUE_AZURE
+                                        )
+                                    )
+                            )
+                        } else {
+                            position2 = LatLng(
+                                problems.lat.toDouble(),
+                                problems.lng.toDouble()
+                            )
+                            mMap.addMarker(
+                                MarkerOptions().position(position2)
+                                    .title("Coordenadas: " + problems.lat + " - " + problems.lng + "/ Tipo de problema:" + problems.type)
+                            )
+                        }
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                Toast.makeText(this@MapsActivity, "${t.message}", Toast.LENGTH_SHORT).show()
+                mMap.clear()
+            }
+        })
+    }
+
+    override fun onSensorChanged(event: SensorEvent?) {
+            try {
+                if (event!!.values[0] < 30 && isRunning == false) {
+                    isRunning = true
+                    val success: Boolean = mMap.setMapStyle(
+                        MapStyleOptions.loadRawResourceStyle(
+                            this, R.raw.style_json_night
+                        )
+                    )
+                } else{
+                    isRunning = false
+                }
+            } catch (e: Exception) {
+
+            }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+
     }
 }

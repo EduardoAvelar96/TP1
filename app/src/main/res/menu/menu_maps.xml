@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
     <item android:id="@+id/btn3"
-        android:title="@string/Logout">
+        android:title="@string/Logout"
+        app:showAsAction="never">
     </item>
     <item android:id="@+id/btn4"
-        android:title="@string/Ins">
+        android:title="@string/Ins"
+        app:showAsAction="never">
     </item>
     <item android:id="@+id/btn5"
-        android:title="@string/FilterType">
+        android:title="@string/FilterType"
+        app:showAsAction="never">
     </item>
     <item android:id="@+id/btn6"
-        android:title="@string/FilterDistance">
+        android:title="@string/FilterDistance"
+        app:showAsAction="never">
     </item>
     <item android:id="@+id/btn7"
-        android:title="@string/Reset">
+        android:title="@string/Reset"
+        app:showAsAction="never">
     </item>
 </menu>

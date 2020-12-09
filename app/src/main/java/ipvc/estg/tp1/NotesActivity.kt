@@ -52,7 +52,7 @@ class NotesActivity : AppCompatActivity(), OnNoteItemClickListener {
             }
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 noteViewModel.deleteNote(adapter.getNoteAt(viewHolder.layoutPosition))
-                Toast.makeText(applicationContext,"@id/NoteDel", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,R.string.NoteDel, Toast.LENGTH_LONG).show()
             }
         }).attachToRecyclerView(recyclerView)
 
@@ -75,7 +75,7 @@ class NotesActivity : AppCompatActivity(), OnNoteItemClickListener {
             }
             R.id.opt2->{
                 noteViewModel.deleteAll()
-                Toast.makeText(applicationContext,"@string/AllDel", Toast.LENGTH_LONG).show()
+                Toast.makeText(applicationContext,R.string.AllDel, Toast.LENGTH_LONG).show()
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -96,7 +96,7 @@ class NotesActivity : AppCompatActivity(), OnNoteItemClickListener {
         } else if(requestCode == newWordActivityRequestCode){
             Toast.makeText(
                     applicationContext,
-                    "@id/Empty",
+                R.string.Empty,
                     Toast.LENGTH_LONG).show()
         }
 
@@ -109,10 +109,10 @@ class NotesActivity : AppCompatActivity(), OnNoteItemClickListener {
             val note = Note(id,titulo,conteudo)
 
             noteViewModel.editNote(note)
-            Toast.makeText(applicationContext,"@id/NoteEdit", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext,R.string.NoteEdit, Toast.LENGTH_LONG).show()
         }
         else if(requestCode == EditActivityRequestCode) {
-            Toast.makeText(applicationContext,"@id/Empty", Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext,R.string.Empty, Toast.LENGTH_LONG).show()
         }
     }
 
